@@ -12,6 +12,12 @@ class App extends GeneticGame {
     constructor(config: Phaser.IGameConfig) {
         super(config);
 
+        this.bot_brain_size = BRAIN_SIZE;
+        this.population = POPULATION;
+        this.current_generation = 0;
+        this.species = [];
+        this.current_species = 0;
+
         this.state.add('boot', Boot);
         this.state.add('load', Load);
         this.state.add('main', Main);
@@ -23,12 +29,9 @@ class App extends GeneticGame {
 }
 
 function startApp(): void {
-    let width: number = 800;
-    let height: number = 800;
-
     let gameConfig: Phaser.IGameConfig = {
-        width,
-        height,
+        width: GAME_WIDTH,
+        height: GAME_HEIGHT,
         renderer: Phaser.AUTO,
         parent: '',
         resolution: 1,

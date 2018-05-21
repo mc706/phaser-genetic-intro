@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -42,6 +43,16 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Genetic Algorithm'
         }),
+        new webpack.DefinePlugin({
+            DEBUG: JSON.stringify(true),
+            GAME_WIDTH: JSON.stringify(800),
+            GAME_HEIGHT: JSON.stringify(800),
+            BRAIN_SIZE: JSON.stringify(1600),
+            POPULATION: JSON.stringify(500),
+            MUTATION_RATE: JSON.stringify(0.01),
+            TARGET: JSON.stringify([750, 50]),
+            SPAWN: JSON.stringify([50, 750]),
 
+        }),
     ]
 };

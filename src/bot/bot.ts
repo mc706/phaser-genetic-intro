@@ -1,14 +1,16 @@
-import {degToRad, getRandomAngle} from '../util/math';
+import {degToRad, getRandomAngle, guid} from '../util/math';
 import GeneticGame from '../base/game';
 
 export default class Bot {
+    id: string;
     game: GeneticGame;
     brain: Brain;
     position: Phaser.Point;
 
     constructor(game: GeneticGame, x: number, y: number) {
+        this.id = guid();
         this.game = game;
-        this.brain = new Brain(400);
+        this.brain = new Brain(800);
         this.position = new Phaser.Point(x, y);
     }
 
