@@ -1,4 +1,4 @@
-import {degToRad, getRandomAngle, guid} from '../util/math';
+import {degToRad, getPercentageChance, getRandomAngle, guid} from '../util/math';
 import GeneticGame from '../base/game';
 
 export default class Bot {
@@ -6,12 +6,14 @@ export default class Bot {
     game: GeneticGame;
     brain: Brain;
     position: Phaser.Point;
+    parent: Bot | null;
 
     constructor(game: GeneticGame, x: number, y: number) {
         this.id = guid();
         this.game = game;
-        this.brain = new Brain(800);
+        this.brain = new Brain(this.game.bot_brain_size);
         this.position = new Phaser.Point(x, y);
+        this.parent = null;
     }
 
     show(): void {
@@ -22,19 +24,26 @@ export default class Bot {
     move(): void {
         let direction = this.brain.nextInstruction();
         if (direction !== null) {
-            let dx = Math.cos(degToRad(direction));
-            let dy = Math.sin(degToRad(direction));
+            let dx = Math.cos(degToRad(direction)) * 2;
+            let dy = Math.sin(degToRad(direction)) * 2;
 
             this.position = this.position.add(dx, dy);
         } else {
+            console.log('Die from tiemout');
+            this.die();
+        }
+        if (!Phaser.Rectangle.containsPoint(this.game.world.bounds, this.position)) {
+            console.log('Die from bounds');
+            this.die();
+        }
+        if (this.position === this.game.target) {
+            console.log('Die from target');
             this.die();
         }
     }
 
     die(): void {
-        let fitness = 0;
         this.game.state.start('analyse');
-
     }
 
 }
@@ -51,7 +60,7 @@ class Brain {
 
     randomize(): void {
         let array = [];
-            let i;
+        let i;
         for (i = 0; i < this.size; i++) {
             array.push(getRandomAngle());
         }
@@ -61,9 +70,22 @@ class Brain {
     nextInstruction(): number | null {
         let instruction = this.instructions[this.step];
         if (!instruction) {
-            return null
+            return null;
         }
         this.step += 1;
         return instruction;
+    }
+
+    reset() {
+        this.step = 0;
+        console.log(this.step, this.instructions);
+    }
+
+    mutate() {
+        for (let i = 0; i < this.instructions.length; i++) {
+            if (getPercentageChance(MUTATION_RATE)) {
+                this.instructions[i] = getRandomAngle();
+            }
+        }
     }
 }
