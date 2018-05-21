@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es6",
+    "allowJs": true,
+    "experimentalDecorators": true
+
+  },
+  "files": [
+    "./src/index.ts",
+    "./node_modules/phaser-ce/typescript/phaser.comments.d.ts"
+  ]
+}
