@@ -39,18 +39,16 @@ export default class Analyse extends GeneticState {
     private calculateFitness(): number {
         let distance = this.game.bot.position.distance(this.game.target);
         let steps = this.game.bot.brain.step;
-        let fitness = 0;
         if (distance < 10) {
-            return 1.0 / 16.0 + 10000.0 / (steps ** 2);
+            return 1E6 * (1.0 / 16.0 + 10000.0 / (steps ** 2));
         } else {
-            return 1 / distance ** 2;
+            return 1E6 * (1 / distance ** 2);
         }
     }
 
     private createNextGeneration(): void {
         let newGeneration = [];
         let totalFitness = this.game.species.reduce((a, c) => a + c.fitness, 0);
-
         while (newGeneration.length < POPULATION) {
             let parent = this.selectParent(totalFitness);
             newGeneration.push(parent.clone());
