@@ -7,3 +7,4 @@ declare const MUTATION_RATE: number;
 declare const TARGET: [number, number];
 declare const SPAWN: [number, number];
 declare const PAUSE: number;
+declare const FRESH_GENES_PERCENT: number;

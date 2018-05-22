@@ -48,6 +48,12 @@ export default class Analyse extends GeneticState {
             let parent = this.selectParent(totalFitness);
             newGeneration.push(parent.clone());
         }
+        // inject fresh genes
+        let fresh_gene_count = Math.floor(POPULATION * FRESH_GENES_PERCENT / 100);
+        for (let i = 0; i < fresh_gene_count; i++){
+            newGeneration[newGeneration.length - i] = new Bot(this.game, SPAWN[0], SPAWN[1]);
+        }
+
         this.game.data[this.game.current_generation] = this.game.species;
         this.game.species = newGeneration;
         this.game.current_generation += 1;

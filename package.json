@@ -12,6 +12,7 @@
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^0.28.11",
     "expose-loader": "^0.7.5",
+    "gh-pages-deploy": "^0.5.0",
     "html-webpack-plugin": "^3.2.0",
     "node-sass": "^4.9.0",
     "phaser-ce": "^2.10.5",
@@ -29,8 +30,16 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --open",
-    "build": "webpack"
+    "build": "webpack",
+    "deploy": "gh-pages-deploy"
   },
   "author": "Ryan McDevitt",
-  "license": "ISC"
+  "license": "ISC",
+  "gh-pages-deploy": {
+    "staticpath": "dist",
+    "prep": [
+      "build"
+    ],
+    "commit": "Deploy to GH-Pages"
+  }
 }
