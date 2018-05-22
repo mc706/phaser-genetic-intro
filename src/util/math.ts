@@ -7,7 +7,7 @@ export const getRandomInRange = (min: number, max: number) => Math.random() * (m
 // Get random angle.
 export const getRandomAngle = () => getRandomInRange(-179, 180);
 
-export const getPercentageChance = (percent: number) => percent <= getRandomInRange(0, 100);
+export const getPercentageChance = (percent: number) =>  percent >= getRandomInRange(0, 100);
 
 // Helper function for guids
 const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);

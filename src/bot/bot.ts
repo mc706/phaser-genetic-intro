@@ -8,8 +8,9 @@ export default class Bot {
     position: Phaser.Point;
     velocity: Phaser.Point;
     parent: Bot | null;
-    step_length: number = 3;
+    step_length: number = 1;
     fitness: number | null = null;
+    isDead:boolean = false;
 
     constructor(game: GeneticGame, x: number, y: number) {
         this.id = guid();
@@ -32,7 +33,7 @@ export default class Bot {
             let dy = Math.sin(degToRad(direction)) * this.step_length;
 
             this.velocity = this.velocity.add(dx, dy);
-            this.velocity.clamp(-9, 9);
+            this.velocity.clamp(-5, 5);
             this.position = this.position.add(this.velocity.x, this.velocity.y);
         } else {
             this.die();
@@ -40,20 +41,32 @@ export default class Bot {
         if (!Phaser.Rectangle.containsPoint(this.game.world.bounds, this.position)) {
             this.die();
         }
-        if (this.position.distance(this.game.target) < 10) {
+        if (this.position.distance(this.game.target) < 16) {
             this.die();
         }
     }
 
     die(): void {
-        this.game.state.start('analyse');
+        this.isDead = true;
     }
 
     clone(): Bot {
         let bot = new Bot(this.game, SPAWN[0], SPAWN[1]);
         bot.parent = this;
         bot.brain = this.brain.clone();
+        bot.isDead = false;
         return bot;
+    }
+
+    calculateFitness(): number {
+        let distance = this.position.distance(this.game.target);
+        let steps = this.brain.step;
+        if (distance < 16) {
+            this.fitness =  1E6 * (1.0 / 16.0 + 10000.0 / (steps ** 2));
+        } else {
+            this.fitness =  1E6 * (1 / distance ** 2);
+        }
+        return this.fitness;
     }
 
 }
@@ -100,7 +113,7 @@ class Brain {
 
     clone(): Brain {
         let brain = new Brain(this.size);
-        brain.instructions = [...this.instructions];
+        brain.instructions = this.instructions.slice(0);
         brain.step = 0;
         return brain;
     }
