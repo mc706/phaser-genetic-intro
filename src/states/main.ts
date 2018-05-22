@@ -7,8 +7,8 @@ export default class Main extends GeneticState {
     }
 
     public render(): void {
-        this.game.context.fillStyle = 'rgb(0,255,0)';
-        this.game.context.fillRect(this.game.target.x, this.game.target.y, 8, 8);
+        let circle = new Phaser.Circle(this.game.target.x, this.game.target.y, 16);
+        this.game.debug.geom(circle,  'rgb(0,255,0)');
         this.game.bot.show();
     }
 }

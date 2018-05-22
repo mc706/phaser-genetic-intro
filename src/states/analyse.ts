@@ -6,12 +6,6 @@ export default class Analyse extends GeneticState {
 
     public create(): void {
         let fitness = this.calculateFitness();
-
-        this.game.data[this.game.current_generation] = this.game.data[this.game.current_generation] || {};
-        this.game.data[this.game.current_generation][this.game.bot.id] = {
-            fitness: fitness,
-            bot: [...this.game.bot.brain.instructions]
-        };
         this.game.species[this.game.current_species].fitness = fitness;
         let style = {font: '18px Arial', fill: '#ff0044', align: 'center'};
         this.game.add.text(100, 100, `Generation: ${this.game.current_generation}`, style);
@@ -29,6 +23,7 @@ export default class Analyse extends GeneticState {
         } else {
             this.game.current_species += 1;
         }
+        this.game.dashboard.render();
         setTimeout(this.reload.bind(this), PAUSE);
     }
 
@@ -53,6 +48,7 @@ export default class Analyse extends GeneticState {
             let parent = this.selectParent(totalFitness);
             newGeneration.push(parent.clone());
         }
+        this.game.data[this.game.current_generation] = this.game.species;
         this.game.species = newGeneration;
         this.game.current_generation += 1;
     }

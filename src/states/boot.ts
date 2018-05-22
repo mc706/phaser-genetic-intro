@@ -8,7 +8,6 @@ export default class Boot extends GeneticState {
     public create(): void {
         // Set game target
         this.game.target = new Phaser.Point(...TARGET);
-        this.game.data = {};
 
         for (let i = 0; i < POPULATION; i++) {
             this.game.species.push(new Bot(

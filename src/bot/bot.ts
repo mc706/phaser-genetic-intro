@@ -21,8 +21,8 @@ export default class Bot {
     }
 
     show(): void {
-        this.game.context.fillStyle = 'rgb(255,0,0)';
-        this.game.context.fillRect(this.position.x, this.position.y, 4, 4);
+        let circle = new Phaser.Circle(this.position.x, this.position.y, 4);
+        this.game.debug.geom(circle,  'rgb(255,0,0)');
     }
 
     move(): void {

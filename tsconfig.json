@@ -7,7 +7,6 @@
     "target": "es6",
     "allowJs": true,
     "experimentalDecorators": true
-
   },
   "files": [
     "./src/globals.d.ts",

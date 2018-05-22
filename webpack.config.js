@@ -21,6 +21,15 @@ module.exports = {
             {test: /pixi\.js$/, loader: 'expose-loader?PIXI'},
             {test: /phaser-split\.js$/, loader: 'expose-loader?Phaser'},
             {test: /p2\.js$/, loader: 'expose-loader?p2'},
+            {
+                test: /\.scss$/,
+                use: [
+                    {loader: 'style-loader'},
+                    {loader: 'css-loader'},
+                    {loader: 'sass-loader'},
+
+                ]
+            }
         ]
     },
     resolve: {
@@ -49,7 +58,7 @@ module.exports = {
             GAME_HEIGHT: JSON.stringify(800),
             BRAIN_SIZE: JSON.stringify(400),
             POPULATION: JSON.stringify(100),
-            MUTATION_RATE: JSON.stringify(0.01),
+            MUTATION_RATE: JSON.stringify(1),
             TARGET: JSON.stringify([750, 50]),
             SPAWN: JSON.stringify([50, 750]),
             PAUSE: JSON.stringify(250),
