@@ -47,12 +47,12 @@ module.exports = {
             DEBUG: JSON.stringify(true),
             GAME_WIDTH: JSON.stringify(800),
             GAME_HEIGHT: JSON.stringify(800),
-            BRAIN_SIZE: JSON.stringify(1600),
-            POPULATION: JSON.stringify(10),
-            MUTATION_RATE: JSON.stringify(0.01),
+            BRAIN_SIZE: JSON.stringify(500),
+            POPULATION: JSON.stringify(25),
+            MUTATION_RATE: JSON.stringify(0.05),
             TARGET: JSON.stringify([750, 50]),
             SPAWN: JSON.stringify([50, 750]),
-
+            PAUSE: JSON.stringify(500),
         }),
     ]
 };

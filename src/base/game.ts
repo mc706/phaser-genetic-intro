@@ -1,3 +1,5 @@
+import Bot from '../bot/bot';
+
 export default class GeneticGame extends Phaser.Game {
     data: any;
     target: any;
@@ -6,5 +8,5 @@ export default class GeneticGame extends Phaser.Game {
     population: number;
     current_generation: number;
     current_species: number;
-    species: any[];
+    species: Bot[];
 }

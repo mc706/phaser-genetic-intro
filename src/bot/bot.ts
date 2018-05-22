@@ -6,13 +6,17 @@ export default class Bot {
     game: GeneticGame;
     brain: Brain;
     position: Phaser.Point;
+    velocity: Phaser.Point;
     parent: Bot | null;
+    step_length: number = 3;
+    fitness: number | null = null;
 
     constructor(game: GeneticGame, x: number, y: number) {
         this.id = guid();
         this.game = game;
         this.brain = new Brain(this.game.bot_brain_size);
         this.position = new Phaser.Point(x, y);
+        this.velocity = new Phaser.Point(0, 0);
         this.parent = null;
     }
 
@@ -24,26 +28,32 @@ export default class Bot {
     move(): void {
         let direction = this.brain.nextInstruction();
         if (direction !== null) {
-            let dx = Math.cos(degToRad(direction)) * 2;
-            let dy = Math.sin(degToRad(direction)) * 2;
+            let dx = Math.cos(degToRad(direction)) * this.step_length;
+            let dy = Math.sin(degToRad(direction)) * this.step_length;
 
-            this.position = this.position.add(dx, dy);
+            this.velocity = this.velocity.add(dx, dy);
+            this.velocity.clamp(-9, 9);
+            this.position = this.position.add(this.velocity.x, this.velocity.y);
         } else {
-            console.log('Die from tiemout');
             this.die();
         }
         if (!Phaser.Rectangle.containsPoint(this.game.world.bounds, this.position)) {
-            console.log('Die from bounds');
             this.die();
         }
-        if (this.position === this.game.target) {
-            console.log('Die from target');
+        if (this.position.distance(this.game.target) < 10) {
             this.die();
         }
     }
 
     die(): void {
         this.game.state.start('analyse');
+    }
+
+    clone(): Bot {
+        let bot = new Bot(this.game, SPAWN[0], SPAWN[1]);
+        bot.parent = this;
+        bot.brain = this.brain.clone();
+        return bot;
     }
 
 }
@@ -76,16 +86,22 @@ class Brain {
         return instruction;
     }
 
-    reset() {
+    reset(): void {
         this.step = 0;
-        console.log(this.step, this.instructions);
     }
 
-    mutate() {
+    mutate(): void {
         for (let i = 0; i < this.instructions.length; i++) {
             if (getPercentageChance(MUTATION_RATE)) {
                 this.instructions[i] = getRandomAngle();
             }
         }
+    }
+
+    clone(): Brain {
+        let brain = new Brain(this.size);
+        brain.instructions = [...this.instructions];
+        brain.step = 0;
+        return brain;
     }
 }

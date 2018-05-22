@@ -6,7 +6,6 @@ import Bot from '../bot/bot';
  */
 export default class Boot extends GeneticState {
     public create(): void {
-        console.log('Boot.create');
         // Set game target
         this.game.target = new Phaser.Point(...TARGET);
         this.game.data = {};

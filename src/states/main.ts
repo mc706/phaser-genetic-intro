@@ -2,10 +2,6 @@ import GeneticState from '../base/state';
 
 export default class Main extends GeneticState {
 
-    public create(): void {
-        console.log('main.create');
-    }
-
     public update(): void {
         this.game.bot.move();
     }

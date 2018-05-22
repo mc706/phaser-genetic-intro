@@ -6,3 +6,4 @@ declare const POPULATION: number;
 declare const MUTATION_RATE: number;
 declare const TARGET: [number, number];
 declare const SPAWN: [number, number];
+declare const PAUSE: number;
