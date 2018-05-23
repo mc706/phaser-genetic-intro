@@ -1,6 +1,14 @@
 import GeneticGame from '../base/game';
 import Bot from '../bot/bot';
 import * as Highcharts from 'highcharts';
+import {
+    buildPercentile,
+    generationAvgFit,
+    generationMaxFit,
+    generationMinFit,
+    prettyNum,
+    redToGreenSpectrum
+} from '../util/math';
 
 export default class Dashboard {
     game: GeneticGame;
@@ -36,10 +44,6 @@ export default class Dashboard {
     <div class="gen-table"></div>
     <div class="geneology"><canvas id="geneology-canvas"></canvas></div>
 </div>`;
-        let canvas = <HTMLCanvasElement> document.querySelector('#geneology-canvas');
-        let container = document.querySelector('.geneology');
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
     }
 
     render(): void {
@@ -54,23 +58,20 @@ export default class Dashboard {
         let config = document.querySelector('.config');
         config.innerHTML = `
     <h5>Configuration:</h5>
-    <p>
-        <span>Population: ${this.game.population}</span></br>
-        <span>Mutation Rate: ${MUTATION_RATE}%</span></br>
-        <span>Brain Size: ${BRAIN_SIZE}</span></br>
-        <span>Fresh Genes Percent: ${FRESH_GENES_PERCENT}%</span></br>
-    </p> `;
+    <span>Population: ${this.game.population}</span></br>
+    <span>Mutation Rate: ${MUTATION_RATE}%</span></br>
+    <span>Brain Size: ${BRAIN_SIZE}</span></br>
+    <span>Fresh Genes Percent: ${FRESH_GENES_PERCENT}%</span></br>`;
     }
 
     renderCurrent(): void {
         let current = document.querySelector('.current');
-        let champion = this.game.species.reduce((a, c) => a.fitness > c.fitness ? a : c, new Bot(this.game, 0, 0));
         current.innerHTML = `
         <h5>Info</h5>
         <span>Current Generation: ${this.game.current_generation}</span></br>
         <span>Current Species: ${this.game.current_species}</span></br>
-        <span>Max Fitness: ${champion.fitness}</span></br>
-        <span>Average Fitness: ${this.game.species.reduce((a, c) => a + c.fitness, 0) / this.game.species.length}</span></br> `;
+        <span>Max Fitness: ${prettyNum(generationMaxFit(this.game.species))}</span></br>
+        <span>Average Fitness: ${prettyNum(generationAvgFit(this.game.species))}</span></br> `;
     }
 
     renderFitness(): void {
@@ -96,11 +97,11 @@ export default class Dashboard {
                 series: [
                     {
                         name: 'Max Fitness',
-                        data: this.game.data.map(species => species.reduce((a, c) => a > c.fitness ? a : c.fitness, 0))
+                        data: this.game.data.map(generationMaxFit)
                     },
                     {
                         name: 'Average Fitness',
-                        data: this.game.data.map(species => species.reduce((a, c) => a + c.fitness, 0) / species.length)
+                        data: this.game.data.map(generationAvgFit)
                     }
                 ]
             });
@@ -120,9 +121,9 @@ export default class Dashboard {
     </thead>
     <tbody>
         ${this.game.data.map((generation, index) => {
-            let max = generation.reduce((a, c) => a > c.fitness ? a : c.fitness, 0);
-            let avg = generation.reduce((a, c) => a + c.fitness, 0) / generation.length;
-            return '<tr><td>' + index + '</td><td>' + max + '</td><td>' + avg + '</td></tr>';
+            let max = generationMaxFit(generation);
+            let avg = generationAvgFit(generation);
+            return '<tr><td>' + index + '</td><td>' + prettyNum(max) + '</td><td>' + prettyNum(avg) + '</td></tr>';
         })}    
     </tbody>
 </table>`;
@@ -131,7 +132,13 @@ export default class Dashboard {
     renderGeneology() {
         let canvas = <HTMLCanvasElement> document.querySelector('#geneology-canvas');
         let ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#0000FF';
+        let container = <HTMLElement> document.querySelector('.geneology');
+        while (this.game.data.length * 45 + 15 > container.clientHeight) {
+            container.style.height = (container.clientHeight + 175).toString();
+        }
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        ctx.lineWidth = 0.25;
         let slot = Math.floor((canvas.width - 10) / POPULATION);
         let generations = [...this.game.data.slice(0), this.game.species.slice(0)];
         generations.forEach((generation, y) => {
@@ -151,19 +158,27 @@ export default class Dashboard {
                     sorted.push(child);
                 }
             }
+
+            let max = generationMaxFit(generation);
+            let min = generationMinFit(generation);
+            let findPercentile = buildPercentile(min, max);
             generations[y] = sorted;
             generations[y].forEach((species, x) => {
-                if (!(species.id in this.rendered_species)) {
-                    let pos_x = x * slot + 5;
-                    let pos_y = 5 + y * 35;
-                    this.rendered_species[species.id] = [pos_x, pos_y];
-                    ctx.fillRect(pos_x, pos_y, 3, 3);
-                    if (species.parent !== null) {
-                        let [parent_x, parent_y] = this.rendered_species[species.parent.id];
-                        ctx.moveTo(pos_x + 1, pos_y + 1);
-                        ctx.lineTo(parent_x + 1, parent_y + 1);
-                        ctx.stroke();
-                    }
+                let pos_x = x * slot + 5;
+                let pos_y = 5 + y * 35;
+                this.rendered_species[species.id] = [pos_x, pos_y];
+                if (species.fitness) {
+                    ctx.fillStyle = redToGreenSpectrum(findPercentile(species.fitness));
+                } else {
+                    ctx.fillStyle = "#0000FF";
+                }
+
+                ctx.fillRect(pos_x, pos_y, 5, 5);
+                if (species.parent !== null) {
+                    let [parent_x, parent_y] = this.rendered_species[species.parent.id];
+                    ctx.moveTo(pos_x + 3, pos_y);
+                    ctx.lineTo(parent_x + 3, parent_y + 5);
+                    ctx.stroke();
                 }
             });
         });

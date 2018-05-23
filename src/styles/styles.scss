@@ -22,6 +22,10 @@ body {
     grid-template-columns: 50% 50%;
     grid-template-rows: 64px auto auto 1fr 1fr;
     grid-template-areas: "header header" "description description" "config current" "fitness geneology" "gen-table geneology";
+    h5 {
+      padding : 0;
+      margin-bottom: 0;
+    }
     .header {
       grid-area: header;
     }
