@@ -110,8 +110,7 @@ export default class Dashboard {
 
     renderGenTable(): void {
         let gentable = document.querySelector('.gen-table');
-        gentable.innerHTML = `
-<table>
+        gentable.innerHTML = `<table>
     <thead>
     <tr>
         <th>Gen</th>
@@ -134,12 +133,29 @@ export default class Dashboard {
         let ctx = canvas.getContext('2d');
         ctx.fillStyle = '#0000FF';
         let slot = Math.floor((canvas.width - 10) / POPULATION);
-        let generations = [...this.game.data, this.game.species];
+        let generations = [...this.game.data.slice(0), this.game.species.slice(0)];
         generations.forEach((generation, y) => {
-            generation.forEach((species, x) => {
+            let sorted;
+            if (y == 0) {
+                sorted = generation.sort((a, b) =>a.id > b.id ? -1 : 1);
+            } else {
+                sorted = [];
+                for (let prev_species of generations[y-1]) {
+                    let children = generation.filter(species => species.parent ? species.parent.id === prev_species.id : false);
+                    for (let child of children) {
+                        sorted.push(child);
+                    }
+                }
+                let fresh_genes = generation.filter(species => !species.parent);
+                for (let child of fresh_genes) {
+                    sorted.push(child);
+                }
+            }
+            generations[y] = sorted;
+            generations[y].forEach((species, x) => {
                 if (!(species.id in this.rendered_species)) {
                     let pos_x = x * slot + 5;
-                    let pos_y = 5 + y * 60;
+                    let pos_y = 5 + y * 35;
                     this.rendered_species[species.id] = [pos_x, pos_y];
                     ctx.fillRect(pos_x, pos_y, 3, 3);
                     if (species.parent !== null) {
