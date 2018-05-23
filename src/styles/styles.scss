@@ -9,19 +9,34 @@ body {
   display: grid;
   justify-content: stretch;
   align-content: stretch;
-  grid-template-columns: 810px 1fr;
-  grid-template-rows: auto;
-  grid-template-areas: "canvas dashboard";
+  @media screen and (min-width: 1400px) {
+    grid-template-columns: 810px 1fr;
+    grid-template-rows: auto;
+    grid-template-areas: "canvas dashboard";
+  }
+  @media screen and (max-width:1400px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas: "canvas" "dashboard";
+  }
   &>canvas {
     grid-area: canvas;
   }
   .dashboard {
     grid-area: dashboard;
     display: grid;
-    overflow: scroll;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 64px auto auto 1fr 1fr;
-    grid-template-areas: "header header" "description description" "config current" "fitness geneology" "gen-table geneology";
+    @media screen and (min-width: 1400px) {
+      grid-template-columns: 50% 50%;
+      grid-template-rows: 64px auto auto 1fr 1fr;
+      grid-template-areas: "header header" "description description" "config current" "fitness geneology" "gen-table geneology";
+      overflow: scroll;
+    }
+    @media screen and (max-width: 1400px) {
+      grid-template-columns: 100%;
+      grid-template-rows: 64px auto auto auto 1fr 1fr;
+      grid-template-areas: "header" "description" "config" "current" "fitness" "gen-table" "geneology";
+    }
+
     h5 {
       padding : 0;
       margin-bottom: 0;
