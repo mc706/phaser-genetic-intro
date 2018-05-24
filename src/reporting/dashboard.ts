@@ -42,7 +42,7 @@ export default class Dashboard {
     <div class="current"></div>
     <div class="fitness"><div id="fitness-container"></div></div>
     <div class="gen-table"></div>
-    <div class="geneology"><canvas id="geneology-canvas"></canvas></div>
+    <div class="geneology"><div class="geneology-scroll"><canvas id="geneology-canvas"></canvas></div></div>
 </div>`;
     }
 
@@ -132,8 +132,8 @@ export default class Dashboard {
     renderGeneology() {
         let canvas = <HTMLCanvasElement> document.querySelector('#geneology-canvas');
         let ctx = canvas.getContext('2d');
-        let container = <HTMLElement> document.querySelector('.geneology');
-        if (this.game.data.length * 45 + 15 > container.clientHeight) {
+        let container = <HTMLElement> document.querySelector('.geneology-scroll');
+        if (this.game.data.length * 45 + 45 > container.clientHeight) {
             container.style.height = (container.clientHeight + 175).toString();
         }
         canvas.width = container.clientWidth;
