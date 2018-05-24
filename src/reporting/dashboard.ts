@@ -133,7 +133,7 @@ export default class Dashboard {
         let canvas = <HTMLCanvasElement> document.querySelector('#geneology-canvas');
         let ctx = canvas.getContext('2d');
         let container = <HTMLElement> document.querySelector('.geneology');
-        while (this.game.data.length * 45 + 15 > container.clientHeight) {
+        if (this.game.data.length * 45 + 15 > container.clientHeight) {
             container.style.height = (container.clientHeight + 175).toString();
         }
         canvas.width = container.clientWidth;
