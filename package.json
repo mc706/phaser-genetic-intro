@@ -13,6 +13,7 @@
     "css-loader": "^0.28.11",
     "expose-loader": "^0.7.5",
     "gh-pages-deploy": "^0.5.0",
+    "hoek": "^5.0.3",
     "html-webpack-plugin": "^3.2.0",
     "node-sass": "^4.9.0",
     "phaser-ce": "^2.10.5",
