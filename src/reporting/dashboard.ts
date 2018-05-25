@@ -51,7 +51,7 @@ export default class Dashboard {
         this.renderCurrent();
         this.renderFitness();
         this.renderGenTable();
-        this.renderGeneology()
+        this.renderGeneology();
     }
 
     renderConfig(): void {
@@ -66,12 +66,19 @@ export default class Dashboard {
 
     renderCurrent(): void {
         let current = document.querySelector('.current');
+        let max, avg;
+        if (this.game.data && this.game.current_generation && this.game.data[this.game.current_generation - 1]) {
+            max = prettyNum(generationMaxFit(this.game.data[this.game.current_generation - 1]));
+            avg = prettyNum(generationAvgFit(this.game.data[this.game.current_generation - 1]));
+        } else {
+            max = 'N/A';
+            avg = 'N/A';
+        }
         current.innerHTML = `
         <h5>Info</h5>
         <span>Current Generation: ${this.game.current_generation}</span></br>
-        <span>Current Species: ${this.game.current_species}</span></br>
-        <span>Max Fitness: ${prettyNum(generationMaxFit(this.game.species))}</span></br>
-        <span>Average Fitness: ${prettyNum(generationAvgFit(this.game.species))}</span></br> `;
+        <span>Max Fitness: ${max}</span></br>
+        <span>Average Fitness: ${avg}</span></br> `;
     }
 
     renderFitness(): void {
@@ -117,14 +124,21 @@ export default class Dashboard {
         <th>Gen</th>
         <th>Max Fit.</th>
         <th>Avg Fit</th>
+        <th>Unique Parents</th>
     </tr>
     </thead>
     <tbody>
         ${this.game.data.map((generation, index) => {
             let max = generationMaxFit(generation);
             let avg = generationAvgFit(generation);
-            return '<tr><td>' + index + '</td><td>' + prettyNum(max) + '</td><td>' + prettyNum(avg) + '</td></tr>';
-        })}    
+            let unique_parents = generation.reduce((a, c) => {
+                if (a.indexOf(c.parent) === -1) {
+                    a.push(c.parent);
+                }
+                return a;
+            }, []);
+            return '<tr><td>' + index + '</td><td>' + prettyNum(max) + '</td><td>' + prettyNum(avg) + '</td><td>' + (unique_parents.length - 1) + '</td></tr>';
+        })}
     </tbody>
 </table>`;
     }
@@ -143,11 +157,11 @@ export default class Dashboard {
         let generations = [...this.game.data.slice(0), this.game.species.slice(0)];
         generations.forEach((generation, y) => {
             let sorted;
-            if (y == 0) {
-                sorted = generation.sort((a, b) =>a.id > b.id ? -1 : 1);
+            if (y === 0) {
+                sorted = generation.sort((a, b) => a.id > b.id ? -1 : 1);
             } else {
                 sorted = [];
-                for (let prev_species of generations[y-1]) {
+                for (let prev_species of generations[y - 1]) {
                     let children = generation.filter(species => species.parent ? species.parent.id === prev_species.id : false);
                     for (let child of children) {
                         sorted.push(child);
@@ -170,7 +184,7 @@ export default class Dashboard {
                 if (species.fitness) {
                     ctx.fillStyle = redToGreenSpectrum(findPercentile(species.fitness));
                 } else {
-                    ctx.fillStyle = "#0000FF";
+                    ctx.fillStyle = '#0000FF';
                 }
 
                 ctx.fillRect(pos_x, pos_y, 5, 5);

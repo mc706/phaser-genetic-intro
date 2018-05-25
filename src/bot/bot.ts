@@ -8,8 +8,9 @@ export default class Bot {
     position: Phaser.Point;
     velocity: Phaser.Point;
     parent: Bot | null;
-    step_length: number = 3;
+    step_length: number = 1;
     fitness: number | null = null;
+    dead: boolean = false;
 
     constructor(game: GeneticGame, x: number, y: number) {
         this.id = guid();
@@ -18,6 +19,7 @@ export default class Bot {
         this.position = new Phaser.Point(x, y);
         this.velocity = new Phaser.Point(0, 0);
         this.parent = null;
+        this.dead = false;
     }
 
     show(): void {
@@ -32,7 +34,7 @@ export default class Bot {
             let dy = Math.sin(degToRad(direction)) * this.step_length;
 
             this.velocity = this.velocity.add(dx, dy);
-            this.velocity.clamp(-9, 9);
+            this.velocity.clamp(-5, 5);
             this.position = this.position.add(this.velocity.x, this.velocity.y);
         } else {
             this.die();
@@ -46,7 +48,7 @@ export default class Bot {
     }
 
     die(): void {
-        this.game.state.start('analyse');
+        this.dead = true;
     }
 
     clone(): Bot {
@@ -54,6 +56,16 @@ export default class Bot {
         bot.parent = this;
         bot.brain = this.brain.clone();
         return bot;
+    }
+
+    calculateFitness(): void {
+        let distance = this.position.distance(this.game.target);
+        let steps = this.brain.step;
+        if (distance < 10) {
+            this.fitness =  1E6 * (1.0 / 10.0 + 10000.0 / (steps ** 2));
+        } else {
+            this.fitness = 1E6 * (1 / distance ** 2);
+        }
     }
 
 }
@@ -72,6 +84,7 @@ class Brain {
         let array = [];
         let i;
         for (i = 0; i < this.size; i++) {
+
             array.push(getRandomAngle());
         }
         this.instructions = array;

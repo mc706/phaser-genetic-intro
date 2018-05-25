@@ -4,7 +4,6 @@ import Dashboard from '../reporting/dashboard';
 export default class GeneticGame extends Phaser.Game {
     data: Bot[][];
     target: any;
-    bot: any;
     bot_brain_size: number;
     population: number;
     current_generation: number;
