@@ -58,7 +58,9 @@ body {
     }
     .gen-table {
       grid-area: gen-table;
+      color: rgba(0,0,0,0);
       table {
+        color: black;
         border-collapse: collapse;
         width: 100%;
       }
