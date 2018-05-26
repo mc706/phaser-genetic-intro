@@ -1,5 +1,6 @@
 import Bot from '../bot/bot';
 import Dashboard from '../reporting/dashboard';
+import Obstacle from '../bot/obstacle';
 
 export default class GeneticGame extends Phaser.Game {
     data: Bot[][];
@@ -10,4 +11,5 @@ export default class GeneticGame extends Phaser.Game {
     current_species: number;
     species: Bot[];
     dashboard: Dashboard;
+    obstacles: Obstacle[];
 }

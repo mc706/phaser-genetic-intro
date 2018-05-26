@@ -24,7 +24,7 @@ export default class Bot {
 
     show(): void {
         let circle = new Phaser.Circle(this.position.x, this.position.y, 4);
-        this.game.debug.geom(circle,  'rgb(255,0,0)');
+        this.game.debug.geom(circle, 'rgb(255,0,0)');
     }
 
     move(): void {
@@ -45,6 +45,12 @@ export default class Bot {
         if (this.position.distance(this.game.target) < 10) {
             this.die();
         }
+        for (let obstacle of this.game.obstacles) {
+            if (obstacle.contains(this.position)) {
+                this.die();
+            }
+        }
+
     }
 
     die(): void {
@@ -62,7 +68,7 @@ export default class Bot {
         let distance = this.position.distance(this.game.target);
         let steps = this.brain.step;
         if (distance < 10) {
-            this.fitness =  1E6 * (1.0 / 10.0 + 10000.0 / (steps ** 2));
+            this.fitness = 1E6 * (1.0 / 10.0 + 10000.0 / (steps ** 2));
         } else {
             this.fitness = 1E6 * (1 / distance ** 2);
         }
